@@ -43,7 +43,7 @@ def main():
 
     sql = "SELECT * FROM `hospitals` WHERE `homepage_url` IS NOT NULL OR `chargemaster_direct_url` IS NOT NULL OR `chargemaster_indirect_url` IS NOT NULL;"
     print(sql)
-    
+ 
     res = db.sql(sql, result_format="json")
     
     bad_homepage_urls = set()
@@ -72,17 +72,26 @@ def main():
     for url in bad_homepage_urls:
         sql = 'UPDATE `hospitals` SET `homepage_url` = NULL WHERE `homepage_url` = "{}"'.format(url)
         print(sql)
-        db.sql(sql, result_format="json")
+        try:
+            db.sql(sql, result_format="json")
+        except Exception as e:
+            print(e)
 
     for url in bad_direct_urls:
         sql = 'UPDATE `hospitals` SET `chargemaster_direct_url` = NULL WHERE `chargemaster_direct_url` = "{}"'.format(url)
         print(sql)
-        db.sql(sql, result_format="json")
+        try:
+            db.sql(sql, result_format="json")
+        except Exception as e:
+            print(e)
 
     for url in bad_indirect_urls:
         sql = 'UPDATE `hospitals` SET `chargemaster_indirect_url` = NULL WHERE `chargemaster_indirect_url` = "{}"'.format(url)
         print(sql)
-        db.sql(sql, result_format="json")
+        try:
+            db.sql(sql, result_format="json")
+        except Exception as e:
+            print(e)
 
 if __name__ == "__main__":
     main()
