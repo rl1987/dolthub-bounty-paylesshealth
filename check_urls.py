@@ -25,7 +25,7 @@ def check_url(url):
     try:
         resp = requests.head(url, headers=headers, timeout=5.0)
         print(resp.url + " " + str(resp.status_code))
-        return int(resp.status_code / 100) != 4
+        return resp.status_code != 404
     except KeyboardInterrupt:
         sys.exit(1)
     except:
