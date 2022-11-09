@@ -20,12 +20,12 @@ def main():
         print("{} <dolt_db_dir> <filetype>".format(sys.argv[0]))
         return
 
-    out_f = open("pricetransp.csv", "w", encoding="utf-8")
-    csv_writer = csv.DictWriter(out_f, fieldnames=FIELDNAMES, lineterminator="\n")
-    csv_writer.writeheader()
-
     dolt_db_dir = sys.argv[1]
     filetype = sys.argv[2]
+
+    out_f = open("{}.csv".format(filetype), "w", encoding="utf-8")
+    csv_writer = csv.DictWriter(out_f, fieldnames=FIELDNAMES, lineterminator="\n")
+    csv_writer.writeheader()
 
     db = dolt.Dolt(dolt_db_dir)
 
