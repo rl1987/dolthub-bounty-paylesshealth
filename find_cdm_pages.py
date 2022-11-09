@@ -68,7 +68,9 @@ def main():
         first_result = json_dict.get("organic")[0]
 
         cdm_indirect_url = first_result.get("link")
-        
+        if ".pdf" in cdm_indirect_url or ".xlsx" in cdm_indirect_url or ".csv" in cdm_indirect_url:
+            continue
+
         out_row = {
             'name': row['name'],
             'ccn': row['ccn'],
