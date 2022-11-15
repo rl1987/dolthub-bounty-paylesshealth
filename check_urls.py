@@ -5,21 +5,22 @@ import sys
 import doltcli as dolt
 import requests
 
+
 def check_url(url):
     headers = {
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
-        'cache-control': 'no-cache',
-        'pragma': 'no-cache',
-        'sec-ch-ua': '"Chromium";v="106", "Google Chrome";v="106", "Not;A=Brand";v="99"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"macOS"',
-        'sec-fetch-dest': 'document',
-        'sec-fetch-mode': 'navigate',
-        'sec-fetch-site': 'none',
-        'sec-fetch-user': '?1',
-        'upgrade-insecure-requests': '1',
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36',
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+        "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+        "cache-control": "no-cache",
+        "pragma": "no-cache",
+        "sec-ch-ua": '"Chromium";v="106", "Google Chrome";v="106", "Not;A=Brand";v="99"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"macOS"',
+        "sec-fetch-dest": "document",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-site": "none",
+        "sec-fetch-user": "?1",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36",
     }
 
     try:
@@ -30,6 +31,7 @@ def check_url(url):
         sys.exit(1)
     except:
         return False
+
 
 def main():
     if len(sys.argv) != 2:
@@ -43,9 +45,9 @@ def main():
 
     sql = "SELECT * FROM `hospitals` WHERE `homepage_url` IS NOT NULL OR `chargemaster_direct_url` IS NOT NULL OR `chargemaster_indirect_url` IS NOT NULL;"
     print(sql)
- 
+
     res = db.sql(sql, result_format="json")
-    
+
     bad_homepage_urls = set()
     bad_direct_urls = set()
     bad_indirect_urls = set()
@@ -53,9 +55,9 @@ def main():
     for row in res["rows"]:
         print(row)
 
-        homepage_url = row.get('homepage_url')
-        chargemaster_direct_url = row.get('chargemaster_direct_url')
-        chargemaster_indirect_url = row.get('chargemaster_indirect_url')
+        homepage_url = row.get("homepage_url")
+        chargemaster_direct_url = row.get("chargemaster_direct_url")
+        chargemaster_indirect_url = row.get("chargemaster_indirect_url")
 
         if homepage_url is not None:
             if not check_url(homepage_url):
@@ -70,7 +72,9 @@ def main():
                 bad_indirect_urls.add(chargemaster_indirect_url)
 
     for url in bad_homepage_urls:
-        sql = 'UPDATE `hospitals` SET `homepage_url` = NULL WHERE `homepage_url` = "{}"'.format(url)
+        sql = 'UPDATE `hospitals` SET `homepage_url` = NULL WHERE `homepage_url` = "{}"'.format(
+            url
+        )
         print(sql)
         try:
             db.sql(sql, result_format="json")
@@ -78,7 +82,9 @@ def main():
             print(e)
 
     for url in bad_direct_urls:
-        sql = 'UPDATE `hospitals` SET `chargemaster_direct_url` = NULL WHERE `chargemaster_direct_url` = "{}"'.format(url)
+        sql = 'UPDATE `hospitals` SET `chargemaster_direct_url` = NULL WHERE `chargemaster_direct_url` = "{}"'.format(
+            url
+        )
         print(sql)
         try:
             db.sql(sql, result_format="json")
@@ -86,13 +92,15 @@ def main():
             print(e)
 
     for url in bad_indirect_urls:
-        sql = 'UPDATE `hospitals` SET `chargemaster_indirect_url` = NULL WHERE `chargemaster_indirect_url` = "{}"'.format(url)
+        sql = 'UPDATE `hospitals` SET `chargemaster_indirect_url` = NULL WHERE `chargemaster_indirect_url` = "{}"'.format(
+            url
+        )
         print(sql)
         try:
             db.sql(sql, result_format="json")
         except Exception as e:
             print(e)
 
+
 if __name__ == "__main__":
     main()
-
