@@ -26,3 +26,10 @@ chmod 0600 /swapfile
 mkswap /swapfile
 swapon /swapfile
 echo "/swapfile swap swap sw 0 0" >> /etc/fstab
+
+wget https://github.com/lc/gau/releases/download/v2.1.2/gau_2.1.2_linux_amd64.tar.gz -O /tmp/gau_2.1.2_linux_amd64.tar.gz
+pushd /tmp
+tar xvf gau_2.1.2_linux_amd64.tar.gz
+mv gau /usr/bin/gau
+popd
+
