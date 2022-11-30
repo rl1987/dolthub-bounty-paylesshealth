@@ -56,20 +56,22 @@ def scrape_direct_url(indirect_url):
     for link in tree.xpath('//a/@href'):
         url = urljoin(resp.url, indirect_url)
 
-        if look_like_cdm_url(url):
+        if looks_like_cdm_url(url):
             return url
 
 def do_recon(db, homepage_url):
     print("Checking:", homepage_url)
-    p = subprocess.run(["gau", "--mt", "text/html", "--threads", "8", "--providers", "commoncrawl,wayback", homepage_url], 
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    p = subprocess.run(["gau", "--mt", "text/html", "--threads", "8", "--providers", "wayback", homepage_url], 
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     print("!")
 
-    for line in p.stdout.read().decode('').split('\n'):
+    for line in p.stdout.decode('utf-8').split('\n'):
         print(line)
         if not line or line == '':
             continue
+
+        url = line
 
         if looks_like_pt_url(url):
             indirect_url = url
