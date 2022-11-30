@@ -61,9 +61,13 @@ def scrape_direct_url(indirect_url):
 
 def do_recon(db, homepage_url):
     print("Checking:", homepage_url)
-    p = subprocess.Popen(["gau", "--mt", "text/html", homepage_url], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    p = subprocess.run(["gau", "--mt", "text/html", "--threads", "8", "--providers", "commoncrawl,wayback", homepage_url], 
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
-    for line in iter(p.stdout.readline, b''):
+    print("!")
+
+    for line in p.stdout.read().decode('').split('\n'):
+        print(line)
         if not line or line == '':
             continue
 
