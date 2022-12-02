@@ -15,7 +15,7 @@ resource "digitalocean_droplet" "server" {
   image     = "debian-11-x64"
   name      = "dhdb-paylesshealth"
   region    = "sfo3"
-  size      = "s-1vcpu-1gb"
+  size      = "s-1vcpu-2gb"
   ssh_keys  = ["a0:39:2b:6a:4b:25:55:64:8a:d6:4c:80:05:69:3c:1b"]
   user_data = file("provision.sh")
 
