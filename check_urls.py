@@ -51,36 +51,36 @@ def main():
 
     db = dolt.Dolt(dolt_db_dir)
 
-    sql = "SELECT * FROM `hospitals` WHERE `homepage_url` IS NOT NULL OR `chargemaster_direct_url` IS NOT NULL OR `chargemaster_indirect_url` IS NOT NULL;"
+    sql = "SELECT * FROM `hospitals` WHERE `homepage` IS NOT NULL OR `cdm_url` IS NOT NULL OR `cdm_indirect_url` IS NOT NULL;"
     print(sql)
 
     res = db.sql(sql, result_format="json")
 
-    bad_homepage_urls = set()
+    bad_homepages = set()
     bad_direct_urls = set()
     bad_indirect_urls = set()
 
     for row in res["rows"]:
         print(row)
 
-        homepage_url = row.get("homepage_url")
-        chargemaster_direct_url = row.get("chargemaster_direct_url")
-        chargemaster_indirect_url = row.get("chargemaster_indirect_url")
+        homepage = row.get("homepage")
+        cdm_url = row.get("cdm_url")
+        cdm_indirect_url = row.get("cdm_indirect_url")
 
-        if homepage_url is not None:
-            if not check_url(homepage_url):
-                bad_homepage_urls.add(homepage_url)
+        if homepage is not None:
+            if not check_url(homepage):
+                bad_homepages.add(homepage)
 
-        if chargemaster_direct_url is not None:
-            if not check_url(chargemaster_direct_url):
-                bad_direct_urls.add(chargemaster_direct_url)
+        if cdm_url is not None:
+            if not check_url(cdm_url):
+                bad_direct_urls.add(cdm_url)
 
-        if chargemaster_indirect_url is not None:
-            if not check_url(chargemaster_indirect_url):
-                bad_indirect_urls.add(chargemaster_indirect_url)
+        if cdm_indirect_url is not None:
+            if not check_url(cdm_indirect_url):
+                bad_indirect_urls.add(cdm_indirect_url)
 
-    for url in bad_homepage_urls:
-        sql = 'UPDATE `hospitals` SET `homepage_url` = NULL WHERE `homepage_url` = "{}"'.format(
+    for url in bad_homepages:
+        sql = 'UPDATE `hospitals` SET `homepage` = NULL WHERE `homepage` = "{}"'.format(
             url
         )
         print(sql)
@@ -90,7 +90,7 @@ def main():
             print(e)
 
     for url in bad_direct_urls:
-        sql = 'UPDATE `hospitals` SET `chargemaster_direct_url` = NULL WHERE `chargemaster_direct_url` = "{}"'.format(
+        sql = 'UPDATE `hospitals` SET `cdm_url` = NULL WHERE `cdm_url` = "{}"'.format(
             url
         )
         print(sql)
@@ -100,7 +100,7 @@ def main():
             print(e)
 
     for url in bad_indirect_urls:
-        sql = 'UPDATE `hospitals` SET `chargemaster_indirect_url` = NULL WHERE `chargemaster_indirect_url` = "{}"'.format(
+        sql = 'UPDATE `hospitals` SET `cdm_indirect_url` = NULL WHERE `cdm_indirect_url` = "{}"'.format(
             url
         )
         print(sql)
