@@ -5,6 +5,7 @@ import sys
 import doltcli as dolt
 import requests
 
+PROXY_URL = "http://brd-customer-hl_cecd546c-zone-zone_residential_test-country-us:kncs4g88b3ca@zproxy.lum-superproxy.io:22225"
 
 def check_url(url):
     headers = {
@@ -23,14 +24,21 @@ def check_url(url):
         "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36",
     }
 
+    proxies = {
+        "http": PROXY_URL,
+        "https": PROXY_URL
+    }
+
     try:
-        resp = requests.head(url, headers=headers, timeout=5.0)
+        resp = requests.head(url, headers=headers, timeout=5.0, proxies=proxies)
         print(resp.url + " " + str(resp.status_code))
         return resp.status_code != 404
     except KeyboardInterrupt:
         sys.exit(1)
     except:
         return False
+
+    return False
 
 
 def main():
