@@ -30,7 +30,7 @@ def check_url(url):
     }
 
     try:
-        resp = requests.head(url, headers=headers, timeout=5.0, proxies=proxies)
+        resp = requests.get(url, headers=headers, timeout=5.0, proxies=proxies, allow_redirects=True, stream=True, verify=False)
         print(resp.url + " " + str(resp.status_code))
         return resp.status_code != 404
     except KeyboardInterrupt:
