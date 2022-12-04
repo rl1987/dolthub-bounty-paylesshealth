@@ -46,8 +46,14 @@ def check_url(url):
 def check_urls_in_col(db, colname):
     sql = "SELECT DISTINCT(`{}`) FROM `hospitals`;".format(colname)
     print(sql)
-
-    res = db.sql(sql, result_format="json")
+    
+    try:
+        res = db.sql(sql, result_format="json")
+    except:
+        try:
+            res = db.sql(sql, result_format="json")
+        except:
+            return
 
     for row in res["rows"]:
         try:
@@ -75,8 +81,11 @@ def check_urls_in_col(db, colname):
                 sql = "UPDATE `hospitals` SET `{}` = \"{}\" WHERE `{}` = \"{}\";".format(colname, valid_urls, colname, orig_urls)
 
             print(sql)
-
-            db.sql(sql, result_format="json")
+            
+            try:
+                db.sql(sql, result_format="json")
+            except Exception as e:
+                print(e)
 
 def main():
     if len(sys.argv) != 2:
