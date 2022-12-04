@@ -11,12 +11,19 @@ provider "digitalocean" {
   token = "1c6508e264c30fcc6249f937d2d4eb2cacd6ebbf25b1b7cd300b777cb2339195"
 }
 
+data "digitalocean_ssh_keys" "keys" {
+  sort {
+    key       = "name"
+    direction = "asc"
+  }
+}
+
 resource "digitalocean_droplet" "server" {
   image     = "debian-11-x64"
   name      = "dhdb-paylesshealth"
   region    = "sfo3"
   size      = "s-1vcpu-2gb"
-  ssh_keys  = ["a0:39:2b:6a:4b:25:55:64:8a:d6:4c:80:05:69:3c:1b"]
+  ssh_keys  = [ for key in data.digitalocean_ssh_keys.keys.ssh_keys: key.fingerprint ]
   user_data = file("provision.sh")
 
   connection {
