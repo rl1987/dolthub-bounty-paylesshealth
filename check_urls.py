@@ -9,7 +9,7 @@ PROXY_URL = "http://brd-customer-hl_cecd546c-zone-zone_unlocker_test2-country-us
 
 def url_goes_404(url):
     if ".gov/" in url:
-        return True
+        return False
     
     headers = {
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
