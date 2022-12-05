@@ -7,7 +7,7 @@ import requests
 
 PROXY_URL = "http://brd-customer-hl_cecd546c-zone-zone_unlocker_test2-country-us:i2jv2kwowy6r@zproxy.lum-superproxy.io:22225"
 
-def check_url(url):
+def url_goes_404(url):
     if ".gov/" in url:
         return True
     
@@ -35,7 +35,7 @@ def check_url(url):
     try:
         resp = requests.get(url, headers=headers, timeout=5.0, proxies=proxies, allow_redirects=True, stream=True, verify=False)
         print(resp.url + " " + str(resp.status_code))
-        return resp.status_code != 404
+        return resp.status_code == 404
     except KeyboardInterrupt:
         sys.exit(1)
     except:
@@ -68,7 +68,7 @@ def check_urls_in_col(db, colname):
         valid_urls = []
 
         for url in orig_urls:
-            if check_url(url):
+            if not url_goes_404(url):
                 valid_urls.append(url)
         
         if orig_urls != valid_urls:
