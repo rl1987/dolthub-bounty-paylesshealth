@@ -5,7 +5,7 @@ import sys
 import doltcli as dolt
 import requests
 
-PROXY_URL = "http://brd-customer-hl_cecd546c-zone-zone_residential_test-country-us:kncs4g88b3ca@zproxy.lum-superproxy.io:22225"
+PROXY_URL = "http://brd-customer-hl_cecd546c-zone-zone_unlocker_test2-country-us:i2jv2kwowy6r@zproxy.lum-superproxy.io:22225"
 
 def check_url(url):
     if ".gov/" in url:
