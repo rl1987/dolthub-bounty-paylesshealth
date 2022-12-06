@@ -11,6 +11,10 @@ dolt config --global --add user.name "rl1987"
 
 pip3 install --upgrade requests lxml js2xml doltpy scrapy openpyxl pandas xlrd
 
+pip3 install --upgrade playwright
+sudo playwright install
+sudo playwright install-deps
+
 curl -sSL https://repos.insights.digitalocean.com/install.sh -o /tmp/install.sh
 bash /tmp/install.sh
 
@@ -18,7 +22,7 @@ mkdir /root/data
 
 pushd /root/data || exit
 dolt clone rl1987/paylesshealth
-popd /root/data || exit
+popd || exit
 
 swapoff -a
 dd if=/dev/zero of=/swapfile bs=1G count=16
@@ -32,4 +36,5 @@ pushd /tmp
 tar xvf gau_2.1.2_linux_amd64.tar.gz
 mv gau /usr/bin/gau
 popd
+
 
