@@ -81,8 +81,11 @@ def do_recon(db, browser, homepage_url):
             
             sql = 'UPDATE `hospitals` SET `cdm_url` = "{}", `cdm_indirect_url` = "{}" WHERE `homepage` = "{}" AND `cdm_url` IS NULL;'.format(direct_url, indirect_url, homepage_url)
             print(sql)
-
-            db.sql(sql, result_format="json")
+            
+            try:
+                db.sql(sql, result_format="json")
+            except:
+                pass
 
 def main():
     if len(sys.argv) != 2:
