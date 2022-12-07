@@ -9,7 +9,7 @@ curl -L https://github.com/dolthub/dolt/releases/latest/download/install.sh > /t
 dolt config --global --add user.email rimantas@keyspace.lt
 dolt config --global --add user.name "rl1987"
 
-pip3 install --upgrade requests lxml js2xml doltpy scrapy openpyxl pandas xlrd
+pip3 install --upgrade requests lxml js2xml doltpy scrapy openpyxl pandas xlrd Scapy
 
 pip3 install --upgrade playwright
 sudo playwright install
