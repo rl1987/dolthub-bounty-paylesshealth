@@ -8,7 +8,7 @@ from scapy.all import *
 
 def resolve_dns(domain):
     try:
-        pkt = IP(dst="1.1.1.1") / UDP() / DNS(rd=1, qd=DNSQR(qname=domain))
+        pkt = IP(dst="1.1.1.1") / UDP() / DNS(rd=1, qd=DNSQR(qname=domain, qtype='A'))
         print(pkt.show())
         ans = sr1(pkt)
     except Exception as e:
@@ -21,7 +21,8 @@ def resolve_dns(domain):
     ancount = dns_pkt.ancount
 
     for i in range(ancount):
-        ip_addrs.append(dns_pkt.an[i].rdata)
+        if dns_pkt.an[i].type == 1:
+            ip_addrs.append(dns_pkt.an[i].rdata)
     
     return ip_addrs
 
