@@ -1,60 +1,18 @@
 #!/usr/bin/python3
 
 import sys
+import socket
 from urllib.parse import urlparse
 
 import doltcli as dolt
-from scapy.all import *
 
-def resolve_dns(domain):
+def domain_not_resolving(ns, domain):
     try:
-        pkt = IP(dst="1.1.1.1") / UDP() / DNS(rd=1, qd=DNSQR(qname=domain, qtype='A'))
-        print(pkt.show())
-        ans = sr1(pkt)
+        t = socket.getaddrinfo(domain, 80, proto=socket.IPPROTO_TCP)
+        print(domain, t)
+        return False
     except Exception as e:
-        print(e)
-        return None
-    
-    dns_pkt = ans["DNS"]
-
-    ip_addrs = []
-    ancount = dns_pkt.ancount
-
-    for i in range(ancount):
-        if dns_pkt.an[i].type == 1:
-            ip_addrs.append(dns_pkt.an[i].rdata)
-    
-    return ip_addrs
-
-
-def is_it_reachable(ip):
-    pkt = IP(dst=ip) / ICMP()
-    print(pkt.show())
-
-    for _ in range(5):
-        try:
-            pkt = IP(dst=ip) / ICMP()
-            ans = sr1(pkt, timeout=1.0)
-            if ans is not None:
-                return True
-        except:
-            continue
-
-    return False
-
-def is_webserver_gone(url):
-    o = urlparse(url)
-    domain = o.netloc
-
-    ip_addrs = resolve_dns(domain)
-    if ip_addrs is None or len(ip_addrs) == 0:
         return True
-    
-    for ip_addr in ip_addrs:
-        if is_it_reachable(ip_addr):
-            return False
-
-    return True
 
 def check_urls_in_col(db, colname):
     sql = "SELECT DISTINCT(`{}`) FROM `hospitals`;".format(colname)
@@ -81,7 +39,9 @@ def check_urls_in_col(db, colname):
         valid_urls = []
 
         for url in orig_urls:
-            if not is_webserver_gone(url):
+            o = urlparse(url)
+            domain = o.netloc
+            if not domain_not_resolving("1.1.1.1", domain):
                 valid_urls.append(url)
         
         if orig_urls != valid_urls:
