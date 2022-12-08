@@ -5,8 +5,6 @@ import sys
 import doltcli as dolt
 import requests
 
-PROXY_URL = "http://brd-customer-hl_cecd546c-zone-zone_unlocker_test2-country-us:i2jv2kwowy6r@zproxy.lum-superproxy.io:22225"
-
 def url_goes_404(url):
     if ".gov/" in url:
         return False
@@ -27,13 +25,8 @@ def url_goes_404(url):
         "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36",
     }
 
-    proxies = {
-        "http": PROXY_URL,
-        "https": PROXY_URL
-    }
-
     try:
-        resp = requests.get(url, headers=headers, timeout=5.0, proxies=proxies, allow_redirects=True, stream=True, verify=False)
+        resp = requests.get(url, headers=headers, timeout=5.0, allow_redirects=True, stream=True, verify=False)
         print(resp.url + " " + str(resp.status_code))
         return resp.status_code == 404
     except KeyboardInterrupt:
