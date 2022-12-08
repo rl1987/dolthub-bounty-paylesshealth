@@ -6,13 +6,13 @@ from urllib.parse import urlparse, urljoin
 
 import doltcli as dolt
 from lxml import html
-from playwright.sync_api import Playwright, sync_playwright
+import requests
 
 PROXY_URL = "http://brd-customer-hl_cecd546c-zone-zone_dc_gau-country-us:oeodmyfnaa7r@zproxy.lum-superproxy.io:22225"
 
 
 def looks_like_pt_url(url):
-    look_for = [ "pricing", "price", "chargemaster", "billing", "transparency", "financial", "pay"]
+    look_for = [ "pricing", "price", "chargemaster", "billing", "transparency", "financial", "pay", "charges" ]
 
     for w in look_for:
         if w in url.lower():
@@ -21,7 +21,7 @@ def looks_like_pt_url(url):
     return False
 
 def looks_like_cdm_url(url):
-    look_for_words  = [ "cdm", "machine", "readable", "standard", "charges", "master" ]
+    look_for_words  = [ "cdm", "machine", "readable", "standard", "charges", "master", "pricing" ]
     look_for_ext = ["zip", "json", "csv", "xlsx", "xls", "pdf"]
 
     for w in look_for_words:
@@ -34,21 +34,23 @@ def looks_like_cdm_url(url):
 
     return False
 
-def scrape_direct_url(browser, indirect_url):
+def scrape_direct_url(indirect_url):
     print("Scraping:", indirect_url)
-    proxy = {
-        'server': 'http://zproxy.lum-superproxy.io:22225',
-        'username': 'brd-customer-hl_cecd546c-zone-zone_dc_gau-country-us',
-        'password': 'oeodmyfnaa7r'
+
+    # https://splash.readthedocs.io/en/stable/api.html#render-html
+    params = {
+        "url": indirect_url,
+        "timeout": "10",
+        "proxy": PROXY_URL,
+        "images": "0"
     }
 
     try:
-        page = browser.new_page(proxy=proxy)
-        page.goto(indirect_url)
-        tree = html.fromstring(page.content())
+        resp = requests.get("http://147.182.252.177:8050/render", params=params)
+        tree = html.fromstring(resp.text)
     except Exception as e:
         print(e)
-        return
+        return None
 
     for link in tree.xpath('//a/@href'):
         url = urljoin(page.url, link)
@@ -57,10 +59,18 @@ def scrape_direct_url(browser, indirect_url):
             print("Direct URL:", url)
             return url
 
-def do_recon(db, browser, homepage_url):
+    return None
+
+def do_recon(db, homepage_url):
+    if ".gov" in homepage_url or "facebook.com" in homepage_url:
+        return
+
+    o = urlparse(homepage_url)
+    domain = o.netloc
+
     print("Checking:", homepage_url)
     p = subprocess.run(["gau", "--proxy", PROXY_URL,
-                        "--mt", "text/html", "--threads", "8", "--providers", "wayback", homepage_url], 
+                        "--mt", "text/html", "--threads", "8", "--providers", "wayback", domain], 
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     for line in p.stdout.decode('utf-8').split('\n'):
@@ -72,7 +82,7 @@ def do_recon(db, browser, homepage_url):
 
         if looks_like_pt_url(url):
             indirect_url = url
-            direct_url = scrape_direct_url(browser, url)
+            direct_url = scrape_direct_url(url)
 
             if direct_url is None:
                 continue
@@ -92,9 +102,6 @@ def main():
         print("Usage:")
         print("{} <dolt_db_dir>".format(sys.argv[0]))
         return
-
-    playwright = sync_playwright().start()
-    browser = playwright.chromium.launch()
 
     dolt_db_dir = sys.argv[1]
 
@@ -122,7 +129,7 @@ def main():
 
         print(homepage_url)
 
-        do_recon(db, browser, homepage_url)
+        do_recon(db, homepage_url)
 
     browser.close()
 
