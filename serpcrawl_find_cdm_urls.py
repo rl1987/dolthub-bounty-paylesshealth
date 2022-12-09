@@ -145,8 +145,5 @@ def main():
 
         do_recon(db, homepage_url)
 
-    browser.close()
-
-
 if __name__ == "__main__":
     main()
