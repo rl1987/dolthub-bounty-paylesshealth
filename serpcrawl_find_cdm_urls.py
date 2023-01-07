@@ -12,7 +12,16 @@ PROXY_URL = "http://brd-customer-hl_cecd546c-zone-zone_dc_gau-country-us:oeodmyf
 
 
 def looks_like_pt_url(url):
-    look_for = [ "pricing", "price", "chargemaster", "billing", "transparency", "financial", "pay", "charges" ]
+    look_for = [
+        "pricing",
+        "price",
+        "chargemaster",
+        "billing",
+        "transparency",
+        "financial",
+        "pay",
+        "charges",
+    ]
 
     for w in look_for:
         if w in url.lower():
@@ -20,30 +29,35 @@ def looks_like_pt_url(url):
 
     return False
 
+
 def looks_like_cdm_url(url):
-    look_for_words  = [ "cdm", "machine", "readable", "standard", "charges", "master", "pricing" ]
+    look_for_words = [
+        "cdm",
+        "machine",
+        "readable",
+        "standard",
+        "charges",
+        "master",
+        "pricing",
+    ]
     look_for_ext = ["zip", "json", "csv", "xlsx", "xls", "pdf"]
 
     for w in look_for_words:
         if w in url.lower():
             o = urlparse(url)
-            
+
             for e in look_for_ext:
                 if e in o.path.lower():
                     return True
 
     return False
 
+
 def scrape_direct_url(indirect_url):
     print("Scraping:", indirect_url)
 
     # https://splash.readthedocs.io/en/stable/api.html#render-html
-    params = {
-        "url": indirect_url,
-        "timeout": "10",
-        "proxy": PROXY_URL,
-        "images": "0"
-    }
+    params = {"url": indirect_url, "timeout": "10", "proxy": PROXY_URL, "images": "0"}
 
     try:
         resp = requests.get("http://147.182.252.177:8050/render", params=params)
@@ -52,7 +66,7 @@ def scrape_direct_url(indirect_url):
         print(e)
         return None
 
-    for link in tree.xpath('//a/@href'):
+    for link in tree.xpath("//a/@href"):
         url = urljoin(page.url, link)
 
         if looks_like_cdm_url(url):
@@ -61,22 +75,27 @@ def scrape_direct_url(indirect_url):
 
     return None
 
+
 def serp_crawl(domain):
-    query = 'site:{} "price transparency" OR "standard charges" OR "chargemaster" OR "machine readable"'.format(domain)
-    
+    query = 'site:{} "price transparency" OR "standard charges" OR "chargemaster" OR "machine readable"'.format(
+        domain
+    )
+
     params = {
-        'q': query,
-        'lum_json': '1',
+        "q": query,
+        "lum_json": "1",
     }
 
     proxies = {
         "http": "http://brd-customer-hl_cecd546c-zone-zone_search:d7gv8z8umqte@zproxy.lum-superproxy.io:22225",
-        "https": "http://brd-customer-hl_cecd546c-zone-zone_search:d7gv8z8umqte@zproxy.lum-superproxy.io:22225"
+        "https": "http://brd-customer-hl_cecd546c-zone-zone_search:d7gv8z8umqte@zproxy.lum-superproxy.io:22225",
     }
 
     urls = []
 
-    resp = requests.get("https://www.google.com/search", params=params, proxies=proxies, verify=False)
+    resp = requests.get(
+        "https://www.google.com/search", params=params, proxies=proxies, verify=False
+    )
     print(resp.url)
 
     organic = resp.json().get("organic", [])
@@ -85,6 +104,7 @@ def serp_crawl(domain):
         urls.append(o.get("link"))
 
     return urls
+
 
 def do_recon(db, homepage_url):
     if ".gov" in homepage_url or "facebook.com" in homepage_url:
@@ -102,14 +122,17 @@ def do_recon(db, homepage_url):
                 continue
 
             print(indirect_url, "->", direct_url)
-            
-            sql = 'UPDATE `hospitals` SET `cdm_url` = "{}", `cdm_indirect_url` = "{}" WHERE `homepage` = "{}" AND `cdm_url` IS NULL;'.format(direct_url, indirect_url, homepage_url)
+
+            sql = 'UPDATE `hospitals` SET `cdm_url` = "{}", `cdm_indirect_url` = "{}" WHERE `homepage` = "{}" AND `cdm_url` IS NULL;'.format(
+                direct_url, indirect_url, homepage_url
+            )
             print(sql)
-            
+
             try:
                 db.sql(sql, result_format="json")
             except:
                 pass
+
 
 def main():
     if len(sys.argv) != 2:
@@ -128,8 +151,10 @@ def main():
 
     for row in res["rows"]:
         homepage_url = row["homepage"]
-        
-        sql = "SELECT COUNT(*) FROM `hospitals` WHERE `homepage` = \"{}\";".format(homepage_url)
+
+        sql = 'SELECT COUNT(*) FROM `hospitals` WHERE `homepage` = "{}";'.format(
+            homepage_url
+        )
         print(sql)
 
         try:
@@ -144,6 +169,7 @@ def main():
         print(homepage_url)
 
         do_recon(db, homepage_url)
+
 
 if __name__ == "__main__":
     main()
