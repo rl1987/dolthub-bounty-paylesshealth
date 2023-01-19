@@ -137,3 +137,5 @@ dmypy.json
 *.xlsx
 *.lock.hcl
 *.curl
+do_token.txt
+*.lock.info
