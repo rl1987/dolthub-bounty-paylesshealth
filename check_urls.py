@@ -103,10 +103,11 @@ def main():
     dolt_db_dir = sys.argv[1]
 
     db = dolt.Dolt(dolt_db_dir)
-    
-    check_urls_in_col(db, 'homepage')
-    check_urls_in_col(db, 'cdm_url')
-    check_urls_in_col(db, 'cdm_indirect_url')
+
+    check_urls_in_col(db, "homepage")
+    check_urls_in_col(db, "cdm_url")
+    check_urls_in_col(db, "cdm_indirect_url")
+
 
 if __name__ == "__main__":
     main()
