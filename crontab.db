@@ -1,2 +1,0 @@
-{"name":"","command":"bash /root/src/daily.sh","schedule":"@daily","stopped":false,"timestamp":"Thu Jan 19 2023 12:23:25 GMT+0000 (Coordinated Universal Time)","logging":"false","mailing":{},"created":1674131005220,"saved":true,"_id":"ykxym1GkoiJ8plFL"}
-{"name":"","command":"bash /root/src/daily.sh","schedule":"@daily","stopped":false,"timestamp":"Thu Jan 19 2023 12:23:25 GMT+0000 (Coordinated Universal Time)","logging":"false","mailing":{},"created":1674131005220,"saved":true,"_id":"ykxym1GkoiJ8plFL"}
