@@ -10,7 +10,7 @@ def try_finding_homepage(
     db, enrollment_id, organization_name, doing_business_as_name, city, state, zip_code
 ):
     hospital_name = doing_business_as_name
-    if hospital_name is None:
+    if hospital_name is None or hospital_name.strip() == "":
         hospital_name = organization_name
 
     google_query = "{} {} {} {}".format(hospital_name, city, state, zip_code)
