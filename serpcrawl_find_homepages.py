@@ -78,16 +78,19 @@ def main():
         city = row.get("city")
         state = row.get("state")
         zip_code = row.get("zip_code")
-
-        try_finding_homepage(
-            db,
-            enrollment_id,
-            organization_name,
-            doing_business_as_name,
-            city,
-            state,
-            zip_code,
-        )
+        
+        try:
+            try_finding_homepage(
+                db,
+                enrollment_id,
+                organization_name,
+                doing_business_as_name,
+                city,
+                state,
+                zip_code,
+            )
+        except Exception as e:
+            print(e)
 
 
 if __name__ == "__main__":
