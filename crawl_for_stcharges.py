@@ -44,6 +44,9 @@ def main():
             line = line[1:]
 
             components = line.split('] ')
+    
+            if len(components) < 2:
+                continue
 
             url1 = components[0]
             url2 = components[1]
