@@ -17,7 +17,7 @@ bash /tmp/install.sh
 mkdir /root/data
 
 pushd /root/data || exit
-dolt clone rl1987/paylesshealth
+dolt clone rl1987/standard-charge-files
 popd || exit
 
 swapoff -a
