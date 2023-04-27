@@ -78,7 +78,7 @@ def main():
         city = row.get("city")
         state = row.get("state")
         zip_code = row.get("zip_code")
-        
+
         try:
             try_finding_homepage(
                 db,
